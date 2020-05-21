@@ -80,8 +80,18 @@ s = Directions.SOUTH
 w = Directions.WEST
 n = Directions.NORTH
 e = Directions.EAST
-import util
 
+class State:
+
+    def __init__(self, parent, position):
+        self.parent = parent
+        self.position = position
+        # G is the distance between the current node and the start node.
+        self.g = 0
+        # H is the heuristic estimated distance from the current node to the end node.
+        self.h = 0
+        # F is the total cost of the node.
+        self.f = 0
 
 def getDirection(d):
     if d == 'North':
@@ -166,6 +176,32 @@ def depthFirstSearch_recursion(problem, stack):
         stack.pop()
         return False, stack
 
+# def breadthFirstSearch(problem):
+#     """Search the shallowest nodes in the search tree first."""
+#     "*** YOUR CODE HERE ***"
+#
+#     fringe = util.Queue()
+#     # Just location, like [7, 7]
+#     startLocation = problem.getStartState()
+#     # (location, path)
+#     startNode = (startLocation, [])
+#     fringe.push(startNode)
+#     visitedLocation = set()
+#     visitedLocation.add(startLocation)
+#
+#     while not fringe.isEmpty():
+#         # node[0] is location, while node[1] is path
+#         node = fringe.pop()
+#         if problem.isGoalState(node[0]):
+#             return node[1]
+#         successors = problem.getSuccessors(node[0])
+#         for item in successors:
+#             if item[0] in visitedLocation:
+#                 continue
+#             visitedLocation.add(item[0])
+#             fringe.push((item[0], node[1] + [item[1]]))
+#
+#     return None
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -174,55 +210,32 @@ def breadthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     "*** YOUR CODE HERE ***"
     # Get start state
-    start_state = problem.getStartState()
+    start_state = State(None, problem.getStartState())
     # A queue to store the states
-    queue = [(start_state, start_state)]
-    checkedPath = [start_state[0]]
-    isGoal, path = breadthFirstSearch_recursion(problem, queue, checkedPath)
-    if isGoal:
-        print("get Goal", path[:-1])
-        path = path[:-1][::-1]
-        return getPathSet(problem, path)
-    else:
-        print "No goal"
-    # util.raiseNotDefined()
+    queue = util.Queue()
+    queue.push(start_state)
+    checkedPath = set()
+    checkedPath.add(start_state.position)
+    while not queue.isEmpty():
+        current_state = queue.pop()
+        # print "current_state:", current_state.position
+        # print "Is current a goal?", problem.isGoalState(current_state.position)
+        # print "Successors:", problem.getSuccessors(current_state.position)
+        if problem.isGoalState(current_state.position):
+            current = current_state
+            path = []
+            while current is not None:
+                path.append(current.position)
+                current = current.parent
+            return getPathSet(problem, path[::-1])  # Return reversed path
 
-
-def breadthFirstSearch_recursion(problem, queue, checkedPath):
-    print(queue)
-    paar_states = queue.pop()
-    current_state = paar_states[0]
-    parent_state = paar_states[1]
-
-    print "current_state:", current_state
-    print "Is current a goal?", problem.isGoalState(current_state)
-    print "Successors:", problem.getSuccessors(current_state)
-    # check goal
-    if problem.isGoalState(current_state):
-        path = [current_state, parent_state]
-        print "Get Goal!!!", current_state
-        return True, path
-    # check wrong way
-    elif len(problem.getSuccessors(current_state)) == 0:
-        return False, []
-    else:
-        checkedPath.append(current_state)
-        for successor in problem.getSuccessors(current_state):
+        for successor in problem.getSuccessors(current_state.position):
             # no cycle
+            # print(successor[0])
             if successor[0] in checkedPath:
                 continue
-            queue.insert(0, (successor[0], current_state))
-
-    isGoal, path = breadthFirstSearch_recursion(problem, queue, checkedPath)
-    if isGoal:
-        if path[-1] == current_state:
-            path.append(parent_state)
-            return True, path
-        else:
-            return True, path
-    else:
-        return False, []
-
+            checkedPath.add(successor[0])
+            queue.push(State(current_state, successor[0]))
 
 def uniformCostSearch(problem):
     print "Start:", problem.getStartState()
@@ -230,64 +243,40 @@ def uniformCostSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    # Get start state
-    start_state = problem.getStartState()
+
     queue = util.PriorityQueue()
-    cost = {start_state: 0}
-    queue.update((start_state, start_state), 1)
-    isGoal, path = uniformCostSearch_recursion(problem, queue, cost)
-    if isGoal:
-        print("get Goal", path[:-1])
-        path = path[:-1][::-1]
-        return getPathSet(problem, path)
-    else:
-        print "No goal"
 
+    start_state = State(None, problem.getStartState())
+    # print(start_state.position)
+    start_state.g = 0
 
-def uniformCostSearch_recursion(problem, queue, cost):
-    paar_states = queue.pop()
-    current_state = paar_states[0]
-    parent_state = paar_states[1]
+    queue.update(start_state, 1)
 
-    print "current_state:", current_state
-    print "Is current a goal?", problem.isGoalState(current_state)
-    print "Successors:", problem.getSuccessors(current_state)
-    # check goal
-    if problem.isGoalState(current_state):
-        path = [current_state, parent_state]
-        print "Get Goal!!!", current_state
-        return True, path
-    # wrong way
-    elif len(problem.getSuccessors(current_state)) == 0:
-        return False, []
-    else:
-        for successor in problem.getSuccessors(current_state):
-            if (successor[0] in cost and cost[successor[0]] > successor[2] + cost[current_state]) or successor[0] not in cost:
-                cost[successor[0]] = successor[2] + cost[current_state]
-                queue.update((successor[0], current_state), cost[successor[0]])
-
-    isGoal, path = uniformCostSearch_recursion(problem, queue, cost)
-    if isGoal:
-        if path[-1] == current_state:
-            path.append(parent_state)
-            return True, path
+    state_list = {start_state.position: start_state}
+    while queue:
+        current_state = queue.pop()
+        print "current_state:", current_state.position
+        print "Is current a goal?", problem.isGoalState(current_state.position)
+        print "Successors:", problem.getSuccessors(current_state.position)
+        if problem.isGoalState(current_state.position):
+            print(" Goal!!!", current_state.position)
+            path = []
+            current = current_state
+            while current is not None:
+                path.append(current.position)
+                current = current.parent
+            return getPathSet(problem, path[::-1])  # Return reversed path
+        elif len(problem.getSuccessors(current_state.position)) == 0:
+            return False
         else:
-            return True, path
-    else:
-        return False, []
+            for successor in problem.getSuccessors(current_state.position):
+                successor_state = State(current_state, successor[0])
+                successor_state.g = successor[2] + current_state.g
+                if successor_state.position not in state_list or state_list.get(
+                        successor_state.position).g > successor_state.g:
+                    state_list[successor_state.position] = successor_state
+                    queue.update(successor_state, successor_state.g)
 
-
-class State:
-
-    def __init__(self, parent, position):
-        self.parent = parent
-        self.position = position
-        # G is the distance between the current node and the start node.
-        self.g = 0
-        # H is the heuristic estimated distance from the current node to the end node.
-        self.h = 0
-        # F is the total cost of the node.
-        self.f = 0
 
 
 def nullHeuristic(state, problem=None):
