@@ -187,6 +187,7 @@ def breadthFirstSearch(problem):
         print "No goal"
     # util.raiseNotDefined()
 
+
 def breadthFirstSearch_recursion(problem, queue, checkedPath):
     print(queue)
     paar_states = queue.pop()
@@ -233,7 +234,6 @@ def uniformCostSearch(problem):
     start_state = problem.getStartState()
     queue = util.PriorityQueue()
     cost = {start_state: 0}
-    # checkedPath = [start_state]
     queue.update((start_state, start_state), 1)
     isGoal, path = uniformCostSearch_recursion(problem, queue, cost)
     if isGoal:
@@ -242,7 +242,6 @@ def uniformCostSearch(problem):
         return getPathSet(problem, path)
     else:
         print "No goal"
-
 
 
 def uniformCostSearch_recursion(problem, queue, cost):
@@ -262,16 +261,10 @@ def uniformCostSearch_recursion(problem, queue, cost):
     elif len(problem.getSuccessors(current_state)) == 0:
         return False, []
     else:
-        # checkedPath.append(current_state)
         for successor in problem.getSuccessors(current_state):
-            # no cycle
-            # if successor[0] in checkedPath:
-            #     continue
             if (successor[0] in cost and cost[successor[0]] > successor[2] + cost[current_state]) or successor[0] not in cost:
                 cost[successor[0]] = successor[2] + cost[current_state]
                 queue.update((successor[0], current_state), cost[successor[0]])
-
-            # print(cost)
 
     isGoal, path = uniformCostSearch_recursion(problem, queue, cost)
     if isGoal:
@@ -283,6 +276,20 @@ def uniformCostSearch_recursion(problem, queue, cost):
     else:
         return False, []
 
+
+class State:
+
+    def __init__(self, parent, position):
+        self.parent = parent
+        self.position = position
+        # G is the distance between the current node and the start node.
+        self.g = 0
+        # H is the heuristic estimated distance from the current node to the end node.
+        self.h = 0
+        # F is the total cost of the node.
+        self.f = 0
+
+
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
@@ -293,8 +300,47 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    queue = util.PriorityQueue()
+
+    start_state = State(None, problem.getStartState())
+    # print(start_state.position)
+    start_state.g = 0
+    start_state.h = heuristic(start_state.position, problem)
+    start_state.f = start_state.g + start_state.h
+
+    queue.update(start_state, 1)
+
+    state_list = {start_state.position: start_state}
+    while queue:
+        current_state = queue.pop()
+        print "current_state:", current_state.position
+        print "Is current a goal?", problem.isGoalState(current_state.position)
+        print "Successors:", problem.getSuccessors(current_state.position)
+        if problem.isGoalState(current_state.position):
+            print(" Goal!!!", current_state.position)
+            path = []
+            current = current_state
+            while current is not None:
+                path.append(current.position)
+                current = current.parent
+            return getPathSet(problem, path[::-1])   # Return reversed path
+        elif len(problem.getSuccessors(current_state.position)) == 0:
+            return False
+        else:
+            for successor in problem.getSuccessors(current_state.position):
+                successor_state = State(current_state, successor[0])
+                successor_state.g = successor[2] + current_state.g
+                successor_state.h = heuristic(start_state.position, problem)
+                successor_state.f = successor_state.g + successor_state.h
+                if successor_state.position not in state_list or state_list.get(successor_state.position).f > successor_state.f:
+                    state_list[successor_state.position] = successor_state
+                    queue.update(successor_state, successor_state.f)
+
+    # util.raiseNotDefined()
 
 
 # Abbreviations
