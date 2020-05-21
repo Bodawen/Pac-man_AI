@@ -143,7 +143,7 @@ def depthFirstSearch(problem):
             return path
         else:
             print("No goal!")
-    util.raiseNotDefined()
+    # util.raiseNotDefined()
 
 
 def depthFirstSearch_recursion(problem, stack):
@@ -185,7 +185,7 @@ def breadthFirstSearch(problem):
         return getPathSet(problem, path)
     else:
         print "No goal"
-    util.raiseNotDefined()
+    # util.raiseNotDefined()
 
 def breadthFirstSearch_recursion(problem, queue, checkedPath):
     print(queue)
@@ -224,10 +224,64 @@ def breadthFirstSearch_recursion(problem, queue, checkedPath):
 
 
 def uniformCostSearch(problem):
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Get start state
+    start_state = problem.getStartState()
+    queue = util.PriorityQueue()
+    cost = {start_state: 0}
+    # checkedPath = [start_state]
+    queue.update((start_state, start_state), 1)
+    isGoal, path = uniformCostSearch_recursion(problem, queue, cost)
+    if isGoal:
+        print("get Goal", path[:-1])
+        path = path[:-1][::-1]
+        return getPathSet(problem, path)
+    else:
+        print "No goal"
 
+
+
+def uniformCostSearch_recursion(problem, queue, cost):
+    paar_states = queue.pop()
+    current_state = paar_states[0]
+    parent_state = paar_states[1]
+
+    print "current_state:", current_state
+    print "Is current a goal?", problem.isGoalState(current_state)
+    print "Successors:", problem.getSuccessors(current_state)
+    # check goal
+    if problem.isGoalState(current_state):
+        path = [current_state, parent_state]
+        print "Get Goal!!!", current_state
+        return True, path
+    # wrong way
+    elif len(problem.getSuccessors(current_state)) == 0:
+        return False, []
+    else:
+        # checkedPath.append(current_state)
+        for successor in problem.getSuccessors(current_state):
+            # no cycle
+            # if successor[0] in checkedPath:
+            #     continue
+            if (successor[0] in cost and cost[successor[0]] > successor[2] + cost[current_state]) or successor[0] not in cost:
+                cost[successor[0]] = successor[2] + cost[current_state]
+                queue.update((successor[0], current_state), cost[successor[0]])
+
+            # print(cost)
+
+    isGoal, path = uniformCostSearch_recursion(problem, queue, cost)
+    if isGoal:
+        if path[-1] == current_state:
+            path.append(parent_state)
+            return True, path
+        else:
+            return True, path
+    else:
+        return False, []
 
 def nullHeuristic(state, problem=None):
     """
