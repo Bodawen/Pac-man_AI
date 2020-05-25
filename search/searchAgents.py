@@ -572,7 +572,14 @@ def foodHeuristic(state, problem):
         return 0
 
     for food in foodList:
-        distance = mazeDistance(position, food, problem.startingGameState)
+        aux = list(food)
+        print("#### FOOD: "+str(food))
+        distX = abs(position[0] - aux[0])
+        #print("#### distX "+str(distX))
+        distY = abs(position[1] - aux[1])
+            #print("#### distY "+str(distY))
+        distance = distX + distY
+        #distance = mazeDistance(position, food, problem.startingGameState)
         if distance > heuristicValue:
             heuristicValue = distance
 
