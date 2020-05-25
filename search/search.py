@@ -137,45 +137,38 @@ def depthFirstSearch(problem):
     # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     # print "Start's successors:", problem.getSuccessors(problem.getStartState())
     "*** YOUR CODE HERE ***"
+    """Search the shallowest nodes in the search tree first."""
+    # print "Start:", problem.getStartState()
+    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    "*** YOUR CODE HERE ***"
     # Get start state
-    start_state = problem.getStartState()
-    # Check if the initiate state is goal state.
-    if problem.isGoalState(start_state):
-        return []
-    # A stack to store all possible states
-    myStack = [problem.getStartState()]
-    for successor in problem.getSuccessors(problem.getStartState()):
-        myStack.append(successor[0])
-        isGoal, reStack = depthFirstSearch_recursion(problem, myStack)
-        if isGoal:
-            print("get goal!")
-            path = getPathSet(problem, reStack)
-            print("The path is:", reStack)
-            return path
-        else:
-            print("No goal!")
-    # util.raiseNotDefined()
+    start_state = State(None, problem.getStartState())
+    # A queue to store the states
+    stack = util.Stack()
+    stack.push(start_state)
+    checkedPath = set()
+    checkedPath.add(start_state.position)
+    while not stack.isEmpty():
+        current_state = stack.pop()
+        # print "current_state:", current_state.position
+        # print "Is current a goal?", problem.isGoalState(current_state.position)
+        # print "Successors:", problem.getSuccessors(current_state.position)
+        if problem.isGoalState(current_state.position):
+            current = current_state
+            path = []
+            while current is not None:
+                path.append(current.position)
+                current = current.parent
+            return getPathSet(problem, path[::-1])  # Return reversed path
 
-
-def depthFirstSearch_recursion(problem, stack):
-    current_state = stack[-1]
-    # print "current_state:", current_state
-    # print "Is current a goal?", problem.isGoalState(current_state)
-    # print "Successors:", problem.getSuccessors(current_state)
-    if problem.isGoalState(current_state):
-        return True, stack
-    elif len(problem.getSuccessors(current_state)) == 0:
-        return False, stack
-    else:
-        for successor in problem.getSuccessors(current_state):
-            if successor[0] in stack:
+        for successor in problem.getSuccessors(current_state.position):
+            # no cycle
+            # print(successor[0])
+            if successor[0] in checkedPath:
                 continue
-            stack.append(successor[0])
-            isGoal, reStack = depthFirstSearch_recursion(problem, stack)
-            if isGoal:
-                return isGoal, reStack
-        stack.pop()
-        return False, stack
+            checkedPath.add(successor[0])
+            stack.push(State(current_state, successor[0]))
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
