@@ -114,7 +114,8 @@ def getPathSet(problem, stack):
                 direction = succ[1]
                 path.append(getDirection(direction))
                 break
-    print(path)
+    # print(path)
+    # print(len(path))
     return path
 
 
@@ -132,9 +133,9 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    # print "Start:", problem.getStartState()
+    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
     "*** YOUR CODE HERE ***"
     # Get start state
     start_state = problem.getStartState()
@@ -158,9 +159,9 @@ def depthFirstSearch(problem):
 
 def depthFirstSearch_recursion(problem, stack):
     current_state = stack[-1]
-    print "current_state:", current_state
-    print "Is current a goal?", problem.isGoalState(current_state)
-    print "Successors:", problem.getSuccessors(current_state)
+    # print "current_state:", current_state
+    # print "Is current a goal?", problem.isGoalState(current_state)
+    # print "Successors:", problem.getSuccessors(current_state)
     if problem.isGoalState(current_state):
         return True, stack
     elif len(problem.getSuccessors(current_state)) == 0:
@@ -176,38 +177,11 @@ def depthFirstSearch_recursion(problem, stack):
         stack.pop()
         return False, stack
 
-# def breadthFirstSearch(problem):
-#     """Search the shallowest nodes in the search tree first."""
-#     "*** YOUR CODE HERE ***"
-#
-#     fringe = util.Queue()
-#     # Just location, like [7, 7]
-#     startLocation = problem.getStartState()
-#     # (location, path)
-#     startNode = (startLocation, [])
-#     fringe.push(startNode)
-#     visitedLocation = set()
-#     visitedLocation.add(startLocation)
-#
-#     while not fringe.isEmpty():
-#         # node[0] is location, while node[1] is path
-#         node = fringe.pop()
-#         if problem.isGoalState(node[0]):
-#             return node[1]
-#         successors = problem.getSuccessors(node[0])
-#         for item in successors:
-#             if item[0] in visitedLocation:
-#                 continue
-#             visitedLocation.add(item[0])
-#             fringe.push((item[0], node[1] + [item[1]]))
-#
-#     return None
-
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    # print "Start:", problem.getStartState()
+    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
     "*** YOUR CODE HERE ***"
     # Get start state
     start_state = State(None, problem.getStartState())
@@ -250,14 +224,14 @@ def uniformCostSearch(problem):
     # print(start_state.position)
     start_state.g = 0
 
-    queue.update(start_state, 1)
+    queue.update(start_state, 0)
 
-    state_list = {start_state.position: start_state}
+    state_list = set()
     while queue:
         current_state = queue.pop()
-        print "current_state:", current_state.position
-        print "Is current a goal?", problem.isGoalState(current_state.position)
-        print "Successors:", problem.getSuccessors(current_state.position)
+        # print "current_state:", current_state.position
+        # # print "Is current a goal?", problem.isGoalState(current_state.position)
+        # print "Successors:", problem.getSuccessors(current_state.position)
         if problem.isGoalState(current_state.position):
             print(" Goal!!!", current_state.position)
             path = []
@@ -266,15 +240,12 @@ def uniformCostSearch(problem):
                 path.append(current.position)
                 current = current.parent
             return getPathSet(problem, path[::-1])  # Return reversed path
-        elif len(problem.getSuccessors(current_state.position)) == 0:
-            return False
-        else:
+        if current_state.position not in state_list:
+            state_list.add(current_state.position)
             for successor in problem.getSuccessors(current_state.position):
-                successor_state = State(current_state, successor[0])
-                successor_state.g = successor[2] + current_state.g
-                if successor_state.position not in state_list or state_list.get(
-                        successor_state.position).g > successor_state.g:
-                    state_list[successor_state.position] = successor_state
+                if successor[0] not in state_list:
+                    successor_state = State(current_state, successor[0])
+                    successor_state.g = successor[2] + current_state.g
                     queue.update(successor_state, successor_state.g)
 
 
@@ -301,36 +272,35 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     start_state.h = heuristic(start_state.position, problem)
     start_state.f = start_state.g + start_state.h
 
-    queue.update(start_state, 1)
+    queue.update(start_state, 0)
 
-    state_list = {start_state.position: start_state}
+    state_list = set()
+    # state_list.add(problem.getStartState())
     while queue:
         current_state = queue.pop()
-        print "current_state:", current_state.position
-        #print "Is current a goal?", problem.isGoalState(current_state.position)
-        print "Successors:", problem.getSuccessors(current_state.position)
+        # print "current_state:", current_state.position
+        # #print "Is current a goal?", problem.isGoalState(current_state.position)
+        # print "Successors:", problem.getSuccessors(current_state.position)
         if problem.isGoalState(current_state.position):
-            print(" Goal!!!", current_state.position)
+            # print(" Goal!!!", current_state.position)
             path = []
             current = current_state
             while current is not None:
                 path.append(current.position)
                 current = current.parent
             return getPathSet(problem, path[::-1])   # Return reversed path
-        elif len(problem.getSuccessors(current_state.position)) == 0:
-            return False
-        else:
+        if current_state.position not in state_list:
+            state_list.add(current_state.position)
             for successor in problem.getSuccessors(current_state.position):
-                successor_state = State(current_state, successor[0])
-                successor_state.g = successor[2] + current_state.g
-                successor_state.h = heuristic(successor[0], problem)  
-                #successor_state.h = heuristic(start_state.position, problem) initially
-                successor_state.f = successor_state.g + successor_state.h
-                if successor_state.position not in state_list or state_list.get(successor_state.position).f > successor_state.f:
-                    state_list[successor_state.position] = successor_state
+                if successor[0] not in state_list:
+                    successor_state = State(current_state, successor[0])
+                    successor_state.g = successor[2] + current_state.g
+                    successor_state.h = heuristic(successor[0], problem)
+                    successor_state.f = successor_state.g + successor_state.h
+
                     queue.update(successor_state, successor_state.f)
 
-    # util.raiseNotDefined()
+    util.raiseNotDefined()
 
 
 # Abbreviations
