@@ -316,6 +316,24 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     util.raiseNotDefined()
 
+# Finding All the Corners
+# python pacman.py -l tinyCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
+# python pacman.py -l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
+# python pacman.py -l bigCorners -z 0.5 -p SearchAgent -a fn=bfs,prob=CornersProblem
+
+# python pacman.py -l tinyCorners -p SearchAgent -a fn=dfs,prob=CornersProblem
+# python pacman.py -l mediumCorners -p SearchAgent -a fn=dfs,prob=CornersProblem
+# python pacman.py -l bigCorners -z 0.5 -p SearchAgent -a fn=dfs,prob=CornersProblem
+
+# python pacman.py -l tinyCorners -p SearchAgent -a fn=ucs,prob=CornersProblem
+# python pacman.py -l mediumCorners -p SearchAgent -a fn=ucs,prob=CornersProblem
+# python pacman.py -l bigCorners -z 0.5 -p SearchAgent -a fn=ucs,prob=CornersProblem
+
+# python pacman.py -l tinyCorners -p SearchAgent -a fn=aStarSearch,prob=CornersProblem,heuristic=cornersHeuristic
+# python pacman.py -l mediumCorners -p SearchAgent -a fn=aStarSearch,prob=CornersProblem,heuristic=cornersHeuristic
+# python pacman.py -l bigCorners -z 0.5 -p SearchAgent -a fn=aStarSearch,prob=CornersProblem,heuristic=cornersHeuristic
+
+
 
 # Abbreviations
 bfs = breadthFirstSearch
