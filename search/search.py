@@ -133,6 +133,11 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
+    # python pacman.py -l tinyMaze -p SearchAgent -a fn=dfs
+    # python pacman.py -l smallMaze -p SearchAgent -a fn=dfs
+    # python pacman.py -l mediumMaze -p SearchAgent -a fn=dfs
+    # python pacman.py -l bigMaze  -p SearchAgent -a fn=dfs -z .5
+
     # print "Start:", problem.getStartState()
     # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     # print "Start's successors:", problem.getSuccessors(problem.getStartState())
@@ -170,11 +175,16 @@ def depthFirstSearch(problem):
             checkedPath.add(successor[0])
             stack.push(State(current_state, successor[0]))
 
+
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     # print "Start:", problem.getStartState()
     # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     # print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    # python pacman.py -l tinyMaze -p SearchAgent -a fn=bfs
+    # python pacman.py -l smallMaze -p SearchAgent -a fn=bfs
+    # python pacman.py -l mediumMaze -p SearchAgent -a fn=bfs
+    # python pacman.py -l bigMaze  -p SearchAgent -a fn=bfs -z .5
     "*** YOUR CODE HERE ***"
     # Get start state
     start_state = State(None, problem.getStartState())
@@ -204,12 +214,18 @@ def breadthFirstSearch(problem):
             checkedPath.add(successor[0])
             queue.push(State(current_state, successor[0]))
 
+
 def uniformCostSearch(problem):
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
+    # python pacman.py -l tinyMaze -p SearchAgent -a fn=ucs
+    # python pacman.py -l smallMaze -p SearchAgent -a fn=ucs
+    # python pacman.py -l mediumMaze -p SearchAgent -a fn=ucs
+    # python pacman.py -l bigMaze  -p SearchAgent -a fn=ucs -z .5
+
+    # print "Start:", problem.getStartState()
+    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    # """Search the node of least total cost first."""
+    # "*** YOUR CODE HERE ***"
 
     queue = util.PriorityQueue()
 
@@ -253,9 +269,14 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    # python pacman.py -l tinyMaze -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
+    # python pacman.py -l smallMaze -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
+    # python pacman.py -l mediumMaze -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
+    # python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic
+
+    # print "Start:", problem.getStartState()
+    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
     "*** YOUR CODE HERE ***"
     queue = util.PriorityQueue()
 
