@@ -415,7 +415,7 @@ def cornersHeuristic(state, problem):
     #print ("#### activeCorners "+str(state[1]))
     #print ("#### corners "+str(corners))
     #distCorner1 = state[1][0]
-
+    #return 0
     #MANHATAN DISTANCE
 
     if(activeCorners == (0,0,0,0)):
@@ -567,23 +567,38 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     heuristicValue = 0
     foodList = foodGrid.asList()
-    
+    #NO HEURISTIC
+    #return 0
     if len(foodList) == 0:
         return 0
 
     for food in foodList:
         aux = list(food)
-        print("#### FOOD: "+str(food))
+        
+        #MANHATTAN DISTANCE HEURISTIC
+        #print("#### FOOD: "+str(food))
         distX = abs(position[0] - aux[0])
         #print("#### distX "+str(distX))
         distY = abs(position[1] - aux[1])
-            #print("#### distY "+str(distY))
+        #print("#### distY "+str(distY))
         distance = distX + distY
+        #"""
+
+        """
+        #EUCLIDEAN DISTANCE HEURISTIC
+        distX = (position[0] - aux[0])**2
+            
+        distY = (position[1] - aux[1])**2
+            
+        distance = math.sqrt(distX + distY)
+        #"""
+
+        #MAZE SEARCH HEURISTIC
         #distance = mazeDistance(position, food, problem.startingGameState)
         if distance > heuristicValue:
             heuristicValue = distance
 
-    print("#### HEURISTIC FOR "+str(position)+"   "+str(heuristicValue))
+    #print("#### HEURISTIC FOR "+str(position)+"   "+str(heuristicValue))
     return heuristicValue
 
 
